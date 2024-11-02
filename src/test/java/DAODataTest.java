@@ -12,6 +12,8 @@ public class DAODataTest {
     @Before
     public void setUp() {
         daoData = new DAOData();
+        // Optionally, clear the database or set it to a known state here
+        // daoData.clearAll(); // Implement a method to clear test data if needed
     }
 
     @Test
