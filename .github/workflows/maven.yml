@@ -10,40 +10,41 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ROOT_PASSWORD: ""  # Set an empty password
           MYSQL_DATABASE: db_mahasiswa
-          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"  # Allow empty password
+          MYSQL_ALLOW_EMPTY_PASSWORD: true  # Allow empty password
+          MYSQL_ROOT_PASSWORD: rootpassword  # It's a good practice to set a root password
         ports:
           - 3306:3306
-        options: >-
-          --health-cmd "mysqladmin ping -h localhost -uroot"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up JDK
-      uses: actions/setup-java@v2
-      with:
-        java-version: '11'
-        distribution: 'temurin'
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'temurin'
 
-    - name: Wait for MySQL to be ready
-      run: |
-        for i in {1..30}; do
-          if mysqladmin ping -h localhost -uroot; then
-            echo "MySQL is up!"
-            break
-          fi
-          echo "Waiting for MySQL..."
-          sleep 2
-        done
+      - name: Wait for MySQL to be ready
+        run: |
+          for i in {1..30}; do
+            if mysqladmin ping -h "127.0.0.1" --silent; then
+              echo "MySQL is up!"
+              break
+            fi
+            echo "Waiting for MySQL..."
+            sleep 2
+          done
 
-    - name: Build with Maven
-      run: mvn clean install
+      - name: Create Database
+        run: |
+          mysql -h 127.0.0.1 -u root -prootpassword -e 'CREATE DATABASE IF NOT EXISTS db_mahasiswa;'
+        # Note: Use the root password here if you set it above
 
-    - name: Run tests
-      run: mvn test
+      - name: Build with Maven
+        run: mvn clean install
+
+      - name: Run tests
+        run: mvn test
