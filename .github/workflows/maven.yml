@@ -1,12 +1,6 @@
 name: Java CI with Maven
 
-on:
-  push:
-    branches:
-      - main  # Ganti dengan nama branch yang sesuai jika perlu
-  pull_request:
-    branches:
-      - main  # Ganti dengan nama branch yang sesuai jika perlu
+on: [push]
 
 jobs:
   test:
@@ -34,6 +28,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '11'
+        distribution: 'temurin'  # Specify the distribution (e.g., temurin, zulu, etc.)
 
     - name: Build with Maven
       run: mvn clean install
