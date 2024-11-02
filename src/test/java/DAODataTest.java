@@ -9,12 +9,26 @@ import java.util.List;
 public class DAODataTest {
     private DAOData daoData;
 
+    private Connection connection;
+
+    public DAOData() {
+        try {
+            // Replace with your actual database URL, username, and password
+            String url = "jdbc:mysql://localhost:3306/db_mahasiswa";
+            String user = "root";
+            String password = "";
+            connection = DriverManager.getConnection(url, user, password);
+        } catch (SQLException e) {
+            System.err.println("There were errors while connecting to db.");
+            e.printStackTrace();
+        }
+
     @Before
     public void setUp() {
-        daoData = new DAOData();
-        // Optionally, clear the database or set it to a known state here
-        // daoData.clearAll(); // Implement a method to clear test data if needed
-    }
+    daoData = new DAOData();
+    // Optionally, clear the database or set it to a known state here
+    // daoData.clearAll(); // Implement a method to clear test data if needed
+        }
 
     @Test
     public void testInsert() {
