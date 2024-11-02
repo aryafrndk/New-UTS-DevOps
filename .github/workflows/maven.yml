@@ -12,6 +12,7 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: ""  # Set an empty password
           MYSQL_DATABASE: db_mahasiswa
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"  # Allow empty password
         ports:
           - 3306:3306
         options: >-
