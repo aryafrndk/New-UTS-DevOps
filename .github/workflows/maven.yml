@@ -10,12 +10,12 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: ""  # Set an empty password
           MYSQL_DATABASE: db_mahasiswa
         ports:
           - 3306:3306
         options: >-
-          --health-cmd "mysqladmin ping -h localhost -uroot -proot"
+          --health-cmd "mysqladmin ping -h localhost -uroot"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -28,7 +28,18 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '11'
-        distribution: 'temurin'  # Specify the distribution (e.g., temurin, zulu, etc.)
+        distribution: 'temurin'
+
+    - name: Wait for MySQL to be ready
+      run: |
+        for i in {1..30}; do
+          if mysqladmin ping -h localhost -uroot; then
+            echo "MySQL is up!"
+            break
+          fi
+          echo "Waiting for MySQL..."
+          sleep 2
+        done
 
     - name: Build with Maven
       run: mvn clean install
