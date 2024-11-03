@@ -27,7 +27,8 @@ public class DAODataTest {
     public void setUp() throws Exception {
         // Koneksi ke database
         connection = DriverManager.getConnection(url, user, password);
-        
+        assertNotNull(connection, "Connection should not be null");
+
         // Membuat tabel jika belum ada
         String createTableSQL = "CREATE TABLE IF NOT EXISTS tb_mahasiswa ("
                 + "nim VARCHAR(20) PRIMARY KEY, "
@@ -39,6 +40,7 @@ public class DAODataTest {
         
         // Inisialisasi DAO
         daoData = new DAOData(connection);
+        assertNotNull(daoData, "DAOData should not be null");
         
         // Membersihkan data sebelum pengujian
         daoData.clearAll();
