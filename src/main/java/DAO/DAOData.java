@@ -24,6 +24,21 @@ public class DAOData implements IDAOData {
         this.connection = connection;
     }
 
+    // Metode untuk menghapus semua data dari tabel tb_mahasiswa
+    public void clearAll() {
+        if (connection == null) {
+            LOGGER.warning("Connection is null. Cannot clear data.");
+            return;
+        }
+        String sql = "DELETE FROM tb_mahasiswa";
+        try (Statement stmt = connection.createStatement()) {
+            stmt.executeUpdate(sql);
+            LOGGER.info("All records deleted from tb_mahasiswa");
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error clearing all data: {0}", e.getMessage());
+        }
+    }
+
     @Override
     public List<TambahData> getAll() {
         List<TambahData> lstMhs = new ArrayList<>();
