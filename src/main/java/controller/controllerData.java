@@ -2,11 +2,12 @@ package controller;
 
 import DAO.DAOData;
 import DAOInterface.IDAOData;
-import java.util.List;
+import java.sql.Connection; // Import Connection
 import javax.swing.JOptionPane;
 import model.TabelModelData;
 import model.TambahData;
 import view.formcrud;
+import koneksi.DBConnection; // Ensure this import is correct for your DBConnection class
 
 /**
  * Controller untuk mengelola data mahasiswa
@@ -18,7 +19,8 @@ public class controllerData {
 
     public controllerData(formcrud fc) {
         this.fc = fc;
-        iData = new DAOData();        
+        Connection connection = DBConnection.connectDB(); // Get the connection
+        iData = new DAOData(connection); // Pass the connection to DAOData
     }
     
     // Method untuk mengisi tabel dengan data mahasiswa
@@ -77,8 +79,8 @@ public class controllerData {
     
     // Method untuk mencari data mahasiswa berdasarkan NIM atau nama
     public void cari(String keyword) {
-    List<TambahData> searchResults = iData.search(keyword);
-    TabelModelData tabelMhs = new TabelModelData(searchResults);
-    fc.getTabelData().setModel(tabelMhs); 
-}
+        List<TambahData> searchResults = iData.search(keyword);
+        TabelModelData tabelMhs = new TabelModelData(searchResults);
+        fc.getTabelData().setModel(tabelMhs); 
+    }
 }
