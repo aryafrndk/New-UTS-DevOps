@@ -1,12 +1,15 @@
+package test;
+
 import DAO.DAOData;
 import model.TambahData;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api .Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class DAODataTest {
     private DAOData daoData;
@@ -14,15 +17,16 @@ public class DAODataTest {
 
     @BeforeEach
     public void setUp() throws SQLException {
-        // Mengatur koneksi ke database
-        connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/db_mahasiswa", "root", "");
+        String url = "jdbc:mysql://localhost:3306/db_mahasiswa";
+        String user = "root";
+        String password = ""; // Ganti dengan password yang sesuai
+        connection = DriverManager.getConnection(url, user, password);
         daoData = new DAOData(connection);
         daoData.clearAll(); // Menghapus semua data sebelum setiap pengujian
     }
 
     @AfterEach
     public void tearDown() {
-        // Menutup koneksi setelah pengujian
         if (connection != null) {
             try {
                 connection.close();
@@ -41,12 +45,11 @@ public class DAODataTest {
         data.setKelas("A");
 
         daoData.insert(data);
-        assertEquals(1, daoData.getAll().size(), "Data should be inserted successfully");
+        Assertions.assertEquals(1, daoData.getAll().size(), "Data should be inserted successfully");
     }
 
     @Test
     public void testUpdate() {
-        // Pertama, kita harus menginsert data sebelum mengupdate
         TambahData data = new TambahData();
         data.setNim("12345");
         data.setNama("John Doe");
@@ -54,17 +57,14 @@ public class DAODataTest {
         data.setKelas("A");
         daoData.insert(data);
 
-        // Sekarang kita update data
         data.setNama("Jane Doe");
         daoData.update(data);
 
-        // Verifikasi bahwa data telah diperbarui
-        assertEquals("Jane Doe", daoData.getAll().get(0).getNama(), "Data should be updated successfully");
+        Assertions.assertEquals("Jane Doe", daoData.getAll().get(0).getNama(), "Data should be updated successfully");
     }
 
     @Test
     public void testDelete() {
-        // Pertama, kita harus menginsert data sebelum menghapus
         TambahData data = new TambahData();
         data.setNim("12345");
         data.setNama("John Doe");
@@ -72,14 +72,12 @@ public class DAODataTest {
         data.setKelas("A");
         daoData.insert(data);
 
-        // Sekarang kita hapus data
         daoData.delete("12345");
-        assertEquals(0, daoData.getAll().size(), "Data should be deleted successfully");
+        Assertions.assertEquals(0, daoData.getAll().size(), "Data should be deleted successfully");
     }
 
     @Test
     public void testSearch() {
-        // Pertama, kita harus menginsert data sebelum mencari
         TambahData data = new TambahData();
         data.setNim("12345");
         data.setNama("John Doe");
@@ -87,7 +85,6 @@ public class DAODataTest {
         data.setKelas("A");
         daoData.insert(data);
 
-        // Sekarang kita cari data
-        assertEquals(1, daoData.search("John").size(), "Search should return one result");
+        Assertions.assertEquals(1, daoData.search("John").size(), "Search should return one result");
     }
 }
