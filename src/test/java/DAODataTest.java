@@ -30,26 +30,25 @@ public class DAODataTest {
             connection = DriverManager.getConnection(url, user, password);
             assertNotNull(connection, "Connection should not be null");
             System.out.println("Database connection established.");
-        
+
             // Create the table if it doesn’t exist
-            String createTableSQL = "CREATE TABLE IF NOT EXISTS tb_mahasiswa ("
-                    + "nim VARCHAR(20) PRIMARY KEY, "
-                    + "nama VARCHAR(20), "
-                    + "jenis_kelamin VARCHAR(35), "
-                    + "kelas VARCHAR(30))";
+            String createTableSQL = "CREATE TABLE IF NOT EXISTS tb_mahasiswa (" +
+                    "nim VARCHAR(20) PRIMARY KEY, " +
+                    "nama VARCHAR(20), " +
+                    "jenis_kelamin VARCHAR(35), " +
+                    "kelas VARCHAR(30))";
             try (Statement statement = connection.createStatement()) {
                 statement.execute(createTableSQL);
             }
-    
+
             // Initialize DAO with connection
             daoData = new DAOData(connection);
             assertNotNull(daoData, "DAOData should not be null");
             System.out.println("DAOData initialized.");
-    
+
             // Clear data before each test
             daoData.clearAll();
         } catch (SQLException e) {
-            e.printStackTrace();
             fail("Failed to set up database connection or DAOData: " + e.getMessage());
         }
     }
@@ -65,7 +64,6 @@ public class DAODataTest {
                 connection.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             fail("Failed to clean up after test: " + e.getMessage());
         }
     }
@@ -74,15 +72,15 @@ public class DAODataTest {
     public void testInsert() {
         System.out.println("Running testInsert...");
         assertNotNull(daoData, "DAOData is null, setup failed.");
-        
+
         TambahData mhs = new TambahData();
         mhs.setNim("12345");
         mhs.setNama("John Doe");
         mhs.setJenisKelamin("Laki-Laki");
         mhs.setKelas("1A");
-    
+
         daoData.insert(mhs);
-    
+
         List<TambahData> allData = daoData.getAll();
         assertTrue(allData.stream().anyMatch(data -> data.getNim().equals("12345")), "Data not found after insert");
     }
