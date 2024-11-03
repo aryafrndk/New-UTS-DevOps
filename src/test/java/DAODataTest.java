@@ -24,26 +24,30 @@ public class DAODataTest {
     private String password = "rootpassword"; // Ganti dengan password yang sesuai
 
     @BeforeEach
-    public void setUp() throws Exception {
-        // Koneksi ke database
-        connection = DriverManager.getConnection(url, user, password);
-        assertNotNull(connection, "Connection should not be null");
-
-        // Membuat tabel jika belum ada
-        String createTableSQL = "CREATE TABLE IF NOT EXISTS tb_mahasiswa ("
-                + "nim VARCHAR(20) PRIMARY KEY, "
-                + "nama VARCHAR(20), "
-                + "jenis_kelamin VARCHAR(35), "
-                + "kelas VARCHAR(30))"; // Tambahkan tanda kurung tutup
-        Statement statement = connection.createStatement();
-        statement.execute(createTableSQL);
-        
-        // Inisialisasi DAO
-        daoData = new DAOData(connection);
-        assertNotNull(daoData, "DAOData should not be null");
-        
-        // Membersihkan data sebelum pengujian
-        daoData.clearAll();
+    public void setUp() {
+        try {
+            // Attempting connection setup
+            connection = DriverManager.getConnection(url, user, password);
+            assertNotNull(connection, "Connection should not be null");
+    
+            // Ensure the table exists
+            String createTableSQL = "CREATE TABLE IF NOT EXISTS tb_mahasiswa ("
+                    + "nim VARCHAR(20) PRIMARY KEY, "
+                    + "nama VARCHAR(20), "
+                    + "jenis_kelamin VARCHAR(35), "
+                    + "kelas VARCHAR(30))";
+            Statement statement = connection.createStatement();
+            statement.execute(createTableSQL);
+    
+            // Initialize DAO with connection
+            daoData = new DAOData(connection);
+            assertNotNull(daoData, "DAOData should not be null");
+    
+            // Clear data if needed
+            daoData.clearAll();
+        } catch (SQLException e) {
+            fail("Failed to set up database connection or DAOData: " + e.getMessage());
+        }
     }
 
     @AfterEach
