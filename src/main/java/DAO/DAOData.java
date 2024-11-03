@@ -30,7 +30,7 @@ public class DAOData implements IDAOData {
         try {
             String url = "jdbc:mysql://localhost:3306/db_mahasiswa";
             String user = "root";
-            String password = ""; // Password kosong
+            String password = "rootpassword"; // Password kosong
             connection = DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
             e.printStackTrace();
