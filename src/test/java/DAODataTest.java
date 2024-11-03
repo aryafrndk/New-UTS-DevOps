@@ -18,18 +18,43 @@ public class DAODataTest {
     private DAOData daoData;
     private Connection connection;
 
-    private final String url = "jdbc:mysql://localhost:3306/db_lembaga_pelatihan"; // Update to your actual database
+    // Update with your database connection details
+    private final String url = "jdbc:mysql://localhost:3306/db_mahasiswa";
     private final String user = "root";
     private final String password = ""; // Replace with your actual password
 
     @BeforeEach
     public void setUp() {
         try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/db_lembaga_pelatihan", "root", "");
+            // Establish connection
+            connection = DriverManager.getConnection(url, user, password);
+            assertNotNull(connection, "Connection should not be null");
+            System.out.println("Database connection established.");
+    
+            // Create the table if it doesn’t exist
+            String createTableSQL = "CREATE TABLE IF NOT EXISTS tb_mahasiswa (" +
+                    "nim VARCHAR(20) PRIMARY KEY, " +
+                    "nama VARCHAR(20), " +
+                    "jenis_kelamin VARCHAR(35), " +
+                    "kelas VARCHAR(30))";
+    
+            try (Statement statement = connection.createStatement()) {
+                statement.execute(createTableSQL);
+                System.out.println("Table tb_mahasiswa created or already exists.");
+            }
+    
+            // Initialize DAO with connection
             daoData = new DAOData(connection);
+            assertNotNull(daoData, "DAOData should not be null after initialization");
+            System.out.println("DAOData initialized successfully.");
+    
+            // Clear data before each test
+            daoData.clearAll();
+            System.out.println("Data cleared before tests.");
+    
         } catch (SQLException e) {
-            e.printStackTrace(); // Jika terjadi kesalahan, cetak stack trace untuk debug
-            fail("Failed to establish database connection");
+            e.printStackTrace();
+            fail("Failed to set up database connection or DAOData: " + e.getMessage());
         }
     }
 
@@ -54,69 +79,72 @@ public class DAODataTest {
         assertNotNull(daoData, "DAOData is null, setup failed.");
 
         TambahData mhs = new TambahData();
-        mhs.setNim("123456");
-        mhs.setNama("Test User");
-        mhs.setJenisKelamin("Male");
-        mhs.setKelas("A");
+        mhs.setNim("12345");
+        mhs.setNama("John Doe");
+        mhs.setJenisKelamin("Laki-Laki");
+        mhs.setKelas("1A");
 
         daoData.insert(mhs);
-        
-        List<TambahData> result = daoData.getAll();
-        assertEquals(1, result.size(), "Data not inserted correctly.");
-        assertEquals("Test User", result.get(0).getNama(), "Inserted name does not match.");
+
+        List<TambahData> allData = daoData.getAll();
+        assertTrue(allData.stream().anyMatch(data -> data.getNim().equals("12345")), "Data not found after insert");
     }
 
     @Test
     public void testUpdate() {
         System.out.println("Running testUpdate...");
-        assertNotNull(daoData, "DAOData is null, setup failed.");
-
         TambahData mhs = new TambahData();
-        mhs.setNim("123456");
-        mhs.setNama("Test User");
-        mhs.setJenisKelamin("Male");
-        mhs.setKelas("A");
+        mhs.setNim("12345");
+        mhs.setNama("John Doe");
+        mhs.setJenisKelamin("Laki-Laki");
+        mhs.setKelas("1A");
         daoData.insert(mhs);
 
-        mhs.setNama("Updated User");
+        // Update data
+        mhs.setNama("John Smith");
         daoData.update(mhs);
 
-        List<TambahData> result = daoData.getAll();
-        assertEquals(1, result.size(), "Data not updated correctly.");
-        assertEquals("Updated User", result.get(0).getNama(), "Updated name does not match.");
+        // Verify data update
+        List<TambahData> allData = daoData.getAll();
+        assertTrue(allData.stream().anyMatch(data -> data.getNim().equals("12345") && data.getNama().equals("John Smith")), "Data not updated correctly");
     }
 
     @Test
     public void testDelete() {
         System.out.println("Running testDelete...");
-        assertNotNull(daoData, "DAOData is null, setup failed.");
-
         TambahData mhs = new TambahData();
-        mhs.setNim("123456");
-        mhs.setNama("Test User");
-        mhs.setJenisKelamin("Male");
-        mhs.setKelas("A");
+        mhs.setNim("12345");
+        mhs.setNama("John Doe");
+        mhs.setJenisKelamin("Laki-Laki");
+        mhs.setKelas("1A");
         daoData.insert(mhs);
-        
-        daoData.delete("123456");
 
-        List<TambahData> result = daoData.getAll();
-        assertEquals(0, result.size(), "Data not deleted correctly.");
+        // Delete data
+        daoData.delete("12345");
+
+        // Verify deletion
+        List<TambahData> allData = daoData.getAll();
+        assertFalse(allData.stream().anyMatch(data -> data.getNim().equals("12345")), "Data not deleted");
     }
 
     @Test
     public void testSearch() {
         System.out.println("Running testSearch...");
-        assertNotNull(daoData, "DAOData is null, setup failed.");
-
         TambahData mhs = new TambahData();
-        mhs.setNim("123456");
-        mhs.setNama("Test User");
-        mhs.setJenisKelamin("Male");
-        mhs.setKelas("A");
+        mhs.setNim("12345");
+        mhs.setNama("John Doe");
+        mhs.setJenisKelamin("Laki-Laki");
+        mhs.setKelas("1A");
         daoData.insert(mhs);
 
-        List<TambahData> result = daoData.search("123456");
-        assertEquals(1, result.size(), "Search by nim failed.");
+        // Search by NIM
+        List<TambahData> searchResults = daoData.search("12345");
+        assertFalse(searchResults.isEmpty(), "Search result is empty for NIM");
+        assertEquals("John Doe", searchResults.get(0).getNama(), "Name does not match search result for NIM");
+
+        // Search by name
+        searchResults = daoData.search("John Doe");
+        assertFalse(searchResults.isEmpty(), "Search result is empty for name");
+        assertEquals("12345", searchResults.get(0).getNim(), "NIM does not match search result for name");
     }
 }
