@@ -11,9 +11,6 @@ import model.TabelModelData;
 import model.TambahData;
 import view.formcrud;
 
-/**
- * Controller untuk mengelola data mahasiswa
- */
 public class controllerData {
     private formcrud fc;
     private IDAOData iData;
@@ -21,13 +18,12 @@ public class controllerData {
 
     public controllerData(formcrud fc) {
         this.fc = fc;
-        // Membuat koneksi ke database
         try {
             String url = "jdbc:mysql://localhost:3306/db_mahasiswa";
             String user = "root";
             String password = ""; // Ganti dengan password yang sesuai
             Connection connection = DriverManager.getConnection(url, user, password);
-            iData = new DAOData(connection); // Menggunakan konstruktor yang benar
+            iData = new DAOData(connection);
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Koneksi ke database gagal!");
