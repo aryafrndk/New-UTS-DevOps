@@ -1,30 +1,38 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package koneksi;
-import java.sql.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-
+import java.sql.SQLException;
 
 public class DBConnection {
-       
-       static final String DB_URL = "jdbc:mysql://localhost:3306/db_mahasiswa";
-       static final String USER = "root";
-       static final String PASS = "";
-       public static Connection connectDB(){
-           Connection conn = null;
-           try{
- //              Class.forName("com.mysql.jdbc.Driver");
-               conn = DriverManager.getConnection(DB_URL,USER,PASS);
-               return conn;
-           }catch(SQLException ex){
-               System.out.println("There were erorrs while connecting to db.");
-               return null;
-           }
-       }
+    // H2 in-memory database URL
+    static final String DB_URL = "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1"; // In-memory database
+    static final String USER = "sa"; // Default user for H2
+    static final String PASS = ""; // Default password for H2
 
-    
+    public static Connection connectDB() {
+        Connection conn = null;
+        try {
+            // Load the H2 JDBC driver (optional for JDBC 4.0 and later)
+            // Class.forName("org.h2.Driver"); // Uncomment if necessary
+            
+            conn = DriverManager.getConnection(DB_URL, USER, PASS);
+            System.out.println("Connection to H2 database established successfully.");
+        } catch (SQLException ex) {
+            System.out.println("Error while connecting to the H2 database: " + ex.getMessage());
+        }
+        return conn;
+    }
+
+    // Optional: Method to close the connection
+    public static void closeConnection(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.close();
+                System.out.println("Connection to H2 database closed successfully.");
+            } catch (SQLException ex) {
+                System.out.println("Error while closing the connection: " + ex.getMessage());
+            }
+        }
+    }
 }
