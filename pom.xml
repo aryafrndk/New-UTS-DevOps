@@ -24,10 +24,10 @@
         </dependency>
         <!-- Dependensi MySQL Connector/J -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.32</version> <!-- Ganti dengan versi terbaru jika perlu -->
-        </dependency>
+             <groupId>mysql</groupId>
+             <artifactId>mysql-connector-java</artifactId>
+             <version>8.0.30</version> <!-- Versi yang Anda gunakan -->
+         </dependency>
     </dependencies>
 
     <build>
