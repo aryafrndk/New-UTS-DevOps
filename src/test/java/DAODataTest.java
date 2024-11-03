@@ -31,38 +31,38 @@ public class DAODataTest {
             connection = DriverManager.getConnection(url, user, password);
             assertNotNull(connection, "Connection should not be null");
             System.out.println("Database connection established.");
-    
+        
             // Create the database if it doesn’t exist
             String createDatabaseSQL = "CREATE DATABASE IF NOT EXISTS " + dbName;
             try (Statement statement = connection.createStatement()) {
                 statement.execute(createDatabaseSQL);
                 System.out.println("Database " + dbName + " created or already exists.");
             }
-    
+        
             // Connect to the specific database
             connection.setCatalog(dbName);
-    
+        
             // Create the table if it doesn’t exist
             String createTableSQL = "CREATE TABLE IF NOT EXISTS tb_mahasiswa (" +
                     "nim VARCHAR(20) PRIMARY KEY, " +
                     "nama VARCHAR(20), " +
                     "jenis_kelamin VARCHAR(35), " +
                     "kelas VARCHAR(30))";
-    
+        
             try (Statement statement = connection.createStatement()) {
                 statement.execute(createTableSQL);
                 System.out.println("Table tb_mahasiswa created or already exists.");
             }
-    
+        
             // Initialize DAO with connection
             daoData = new DAOData(connection);
             assertNotNull(daoData, "DAOData should not be null after initialization");
             System.out.println("DAOData initialized successfully.");
-    
+        
             // Clear data before each test
             daoData.clearAll();
             System.out.println("Data cleared before tests.");
-    
+        
         } catch (SQLException e) {
             e.printStackTrace();
             fail("Failed to set up database connection or DAOData: " + e.getMessage());
