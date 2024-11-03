@@ -26,11 +26,12 @@ public class DAODataTest {
     @BeforeEach
     public void setUp() {
         try {
-            // Attempting connection setup
+            // Attempt to establish connection
             connection = DriverManager.getConnection(url, user, password);
             assertNotNull(connection, "Connection should not be null");
+            System.out.println("Database connection established.");
     
-            // Ensure the table exists
+            // Create table if it doesn’t exist
             String createTableSQL = "CREATE TABLE IF NOT EXISTS tb_mahasiswa ("
                     + "nim VARCHAR(20) PRIMARY KEY, "
                     + "nama VARCHAR(20), "
@@ -39,13 +40,15 @@ public class DAODataTest {
             Statement statement = connection.createStatement();
             statement.execute(createTableSQL);
     
-            // Initialize DAO with connection
+            // Initialize DAO
             daoData = new DAOData(connection);
             assertNotNull(daoData, "DAOData should not be null");
+            System.out.println("DAOData initialized.");
     
-            // Clear data if needed
+            // Clear data before testing
             daoData.clearAll();
         } catch (SQLException e) {
+            e.printStackTrace();
             fail("Failed to set up database connection or DAOData: " + e.getMessage());
         }
     }
@@ -61,14 +64,16 @@ public class DAODataTest {
 
     @Test
     public void testInsert() {
+        System.out.println("Running testInsert...");
+        assertNotNull(daoData, "DAOData is null, setup failed.");
         TambahData mhs = new TambahData();
         mhs.setNim("12345");
         mhs.setNama("John Doe");
         mhs.setJenisKelamin("Laki-Laki");
         mhs.setKelas("1A");
-
+    
         daoData.insert(mhs);
-        // Verifikasi bahwa data berhasil dimasukkan
+    
         List<TambahData> allData = daoData.getAll();
         assertTrue(allData.stream().anyMatch(data -> data.getNim().equals("12345")));
     }
