@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 
 public class DAOData implements IDAOData {
     private static final Logger LOGGER = Logger.getLogger(DAOData.class.getName());
-    private Connection connection;
+    private final Connection connection;
 
     private static final String READ_QUERY = "SELECT * FROM tb_mahasiswa";
     private static final String CHECK_QUERY = "SELECT COUNT(*) FROM tb_mahasiswa WHERE nim = ?";
@@ -24,7 +24,6 @@ public class DAOData implements IDAOData {
         this.connection = connection;
     }
 
-    // Metode untuk menghapus semua data dari tabel tb_mahasiswa
     public void clearAll() {
         if (connection == null) {
             LOGGER.warning("Connection is null. Cannot clear data.");
