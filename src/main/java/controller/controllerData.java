@@ -2,6 +2,9 @@ package controller;
 
 import DAO.DAOData;
 import DAOInterface.IDAOData;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.List;
 import javax.swing.JOptionPane;
 import model.TabelModelData;
@@ -18,7 +21,17 @@ public class controllerData {
 
     public controllerData(formcrud fc) {
         this.fc = fc;
-        iData = new DAOData();        
+        // Membuat koneksi ke database
+        try {
+            String url = "jdbc:mysql://localhost:3306/db_mahasiswa";
+            String user = "root";
+            String password = "rootpassword"; // Ganti dengan password yang sesuai
+            Connection connection = DriverManager.getConnection(url, user, password);
+            iData = new DAOData(connection); // Menggunakan konstruktor yang benar
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Koneksi ke database gagal!");
+        }
     }
     
     // Method untuk mengisi tabel dengan data mahasiswa
@@ -77,8 +90,8 @@ public class controllerData {
     
     // Method untuk mencari data mahasiswa berdasarkan NIM atau nama
     public void cari(String keyword) {
-    List<TambahData> searchResults = iData.search(keyword); // Memanggil method search
-    TabelModelData tabelMhs = new TabelModelData(searchResults);
-    fc.getTabelData().setModel(tabelMhs); 
-}
+        List<T ambahData> searchResults = iData.search(keyword); // Memanggil method search
+        TabelModelData tabelMhs = new TabelModelData(searchResults);
+        fc.getTabelData().setModel(tabelMhs); 
+    }
 }
