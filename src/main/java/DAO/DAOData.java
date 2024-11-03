@@ -73,7 +73,7 @@ public class DAOData implements IDAOData {
     public void insert(TambahData b) {
         if (connection == null) {
             System.out.println("Connection is null. Cannot insert data.");
- return; // Atau lempar exception sesuai kebutuhan
+            return; // Atau lempar exception sesuai kebutuhan
         }
         try (PreparedStatement statement = connection.prepareStatement(CHECK_QUERY)) {
             statement.setString(1, b.getNim());
@@ -92,7 +92,7 @@ public class DAOData implements IDAOData {
             statement.setString(3, b.getJenisKelamin());
             statement.setString(4, b.getKelas());
             statement.execute();
-            JOptionPane.showMessageDialog(null, "Data berhasil diinput!");
+            JOptionPane.showMessageDialog(null , "Data berhasil diinput!");
         } catch (SQLException e) {
             System.out.println("Error inserting data: " + e.getMessage());
         }
@@ -117,13 +117,13 @@ public class DAOData implements IDAOData {
     }
 
     @Override
-    public void delete(TambahData b) {
+    public void delete(String nim) {
         if (connection == null) {
             System.out.println("Connection is null. Cannot delete data.");
             return; // Atau lempar exception sesuai kebutuhan
         }
         try (PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
-            statement.setString(1, b.getNim());
+            statement.setString(1, nim);
             statement.execute();
             JOptionPane.showMessageDialog(null, "Data berhasil dihapus!");
         } catch (SQLException e) {
