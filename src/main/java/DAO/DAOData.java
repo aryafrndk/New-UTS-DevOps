@@ -73,7 +73,7 @@ public class DAOData implements IDAOData {
     public void insert(TambahData b) {
         if (connection == null) {
             System.out.println("Connection is null. Cannot insert data.");
-            return; // Atau lempar exception sesuai kebutuhan
+ return; // Atau lempar exception sesuai kebutuhan
         }
         try (PreparedStatement statement = connection.prepareStatement(CHECK_QUERY)) {
             statement.setString(1, b.getNim());
@@ -129,5 +129,27 @@ public class DAOData implements IDAOData {
         } catch (SQLException e) {
             System.out.println("Error deleting data: " + e.getMessage());
         }
+    }
+
+    @Override
+    public List<TambahData> search(String keyword) {
+        List<TambahData> lstMhs = new ArrayList<>();
+        String sql = "SELECT * FROM tb_mahasiswa WHERE nim LIKE ? OR nama LIKE ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, "%" + keyword + "%");
+            statement.setString(2, "%" + keyword + "%");
+            ResultSet res = statement.executeQuery();
+            while (res.next()) {
+                TambahData mhs = new TambahData();
+                mhs.setNim(res.getString("nim"));
+                mhs.setNama(res.getString("nama"));
+                mhs.setJenisKelamin(res.getString("jenis_kelamin"));
+                mhs.setKelas(res.getString("kelas"));
+                lstMhs.add(mhs);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error searching data: " + e.getMessage());
+        }
+        return lstMhs;
     }
 }
