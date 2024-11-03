@@ -2,15 +2,15 @@ package controller;
 
 import DAO.DAOData;
 import DAOInterface.IDAOData;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.List;
 import javax.swing.JOptionPane;
 import model.TabelModelData;
 import model.TambahData;
 import view.formcrud;
 
+/**
+ * Controller untuk mengelola data mahasiswa
+ */
 public class controllerData {
     private formcrud fc;
     private IDAOData iData;
@@ -18,16 +18,7 @@ public class controllerData {
 
     public controllerData(formcrud fc) {
         this.fc = fc;
-        try {
-            String url = "jdbc:mysql://localhost:3306/db_mahasiswa";
-            String user = "root";
-            String password = ""; // Ganti dengan password yang sesuai
-            Connection connection = DriverManager.getConnection(url, user, password);
-            iData = new DAOData(connection); // Menggunakan konstruktor yang benar
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Koneksi ke database gagal!");
-        }
+        iData = new DAOData();        
     }
     
     // Method untuk mengisi tabel dengan data mahasiswa
@@ -44,16 +35,8 @@ public class controllerData {
         b.setNama(fc.gettxtNama().getText());
         b.setJenisKelamin(fc.getjenisKelamin().getSelectedItem().toString());
         b.setKelas(fc.gettxtKelas().getText());
-
-        // Validasi input
-        if (b.getNim().isEmpty() || b.getNama().isEmpty() || b.getKelas().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Semua field harus diisi!");
-            return;
-        }
-
         iData.insert(b);
         JOptionPane.showMessageDialog(null, "Data berhasil ditambahkan!");
-        isiTable(); // Refresh tabel setelah penambahan
     }
     
     // Method untuk mereset form input
@@ -82,35 +65,20 @@ public class controllerData {
         b.setJenisKelamin(fc.getjenisKelamin().getSelectedItem().toString());
         b.setKelas(fc.gettxtKelas().getText());
         b.setNim(fc.gettxtNim().getText());
-
-        // Validasi input
-        if (b.getNim().isEmpty() || b.getNama ().isEmpty() || b.getKelas().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Semua field harus diisi!");
-            return;
-        }
-
         iData.update(b);
         JOptionPane.showMessageDialog(null, "Berhasil Melakukan Update!");
-        isiTable(); // Refresh tabel setelah perubahan
     }
     
     // Method untuk menghapus data mahasiswa
     public void delete() {
-        String nim = fc.gettxtNim().getText();
-        if (nim.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Pilih data yang ingin dihapus!");
-            return;
-        }
-
-        iData.delete(nim);
+        iData.delete(fc.gettxtNim().getText());
         JOptionPane.showMessageDialog(null, "Berhasil Menghapus Data!");
-        isiTable(); // Refresh tabel setelah penghapusan
     }
     
     // Method untuk mencari data mahasiswa berdasarkan NIM atau nama
     public void cari(String keyword) {
-        List<TambahData> searchResults = iData.search(keyword); // Memanggil method search
-        TabelModelData tabelMhs = new TabelModelData(searchResults);
-        fc.getTabelData().setModel(tabelMhs); 
-    }
+    List<TambahData> searchResults = iData.search(keyword);
+    TabelModelData tabelMhs = new TabelModelData(searchResults);
+    fc.getTabelData().setModel(tabelMhs); 
+}
 }
