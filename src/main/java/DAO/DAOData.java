@@ -1,161 +1,162 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package DAO;
-
+import javax.swing.JOptionPane;
 import DAOInterface.IDAOData;
-import model.TambahData;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
+import model.TambahData;
+import koneksi.DBConnection;
 
+/**
+ *
+ * @author ASUS
+ */
 public class DAOData implements IDAOData {
-    private static final Logger LOGGER = Logger.getLogger(DAOData.class.getName());
-    private final Connection connection;
-
-    private static final String READ_QUERY = "SELECT * FROM tb_mahasiswa";
-    private static final String CHECK_QUERY = "SELECT COUNT(*) FROM tb_mahasiswa WHERE nim = ?";
-    private static final String INSERT_QUERY = "INSERT INTO tb_mahasiswa(nim, nama, jenis_kelamin, kelas) VALUES(?, ?, ?, ?)";
-    private static final String UPDATE_QUERY = "UPDATE tb_mahasiswa SET nama = ?, jenis_kelamin = ?, kelas = ? WHERE nim = ?";
-    private static final String DELETE_QUERY = "DELETE FROM tb_mahasiswa WHERE nim = ?";
-
-    public DAOData(Connection connection) {
-        this.connection = connection;
-    }
-
-    public void clearAll() {
-        if (connection == null) {
-            LOGGER.warning("Connection is null. Cannot clear data.");
-            return;
-        }
-        String sql = "DELETE FROM tb_mahasiswa";
-        try (Statement stmt = connection.createStatement()) {
-            stmt.executeUpdate(sql);
-            LOGGER.info("All records deleted from tb_mahasiswa");
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error clearing all data: {0}", e.getMessage());
-        }
+    
+    public DAOData(){
+        con = DBConnection.connectDB();
     }
 
     @Override
     public List<TambahData> getAll() {
-        List<TambahData> lstMhs = new ArrayList<>();
-        if (connection == null) {
-            LOGGER.warning("Connection is null. Cannot retrieve data.");
-            return lstMhs;
-        }
-        try (Statement st = connection.createStatement(); ResultSet res = st.executeQuery(READ_QUERY)) {
-            while (res.next()) {
-                TambahData mhs = new TambahData();
-                mhs.setNim(res.getString("nim"));
-                mhs.setNama(res.getString("nama"));
-                mhs.setJenisKelamin(res.getString("jenis_kelamin"));
-                mhs.setKelas(res.getString("kelas"));
-                lstMhs.add(mhs);
-            }
-            LOGGER.info("Data retrieved successfully.");
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error retrieving data: {0}", e.getMessage());
+        List<TambahData> lstMhs = null;
+        try{
+            lstMhs = new ArrayList<TambahData>();
+             Statement st = (Statement) DBConnection.connectDB().createStatement();
+             ResultSet res = st.executeQuery(read);
+             while(res.next()){
+                 TambahData mhs = new TambahData();
+                 mhs.setNim(res.getString("nim"));
+                 mhs.setNama(res.getString("nama"));
+                 mhs.setJenisKelamin(res.getString("jenis_kelamin"));
+                 mhs.setKelas(res.getString("kelas"));
+                 lstMhs.add(mhs);
+             }
+        }catch(SQLException e){  
+            System.out.println("ERORR!"+e);
         }
         return lstMhs;
     }
 
     @Override
     public void insert(TambahData b) {
-        if (connection == null) {
-            JOptionPane.showMessageDialog(null, "Connection is null. Cannot insert data.");
+    PreparedStatement statement = null;
+    ResultSet resultSet = null;
+    try {
+        // Mengecek keberadaan data dengan menggunakan SELECT statement
+        statement = con.prepareStatement(checkQuery);
+        statement.setString(1, b.getNim());
+        resultSet = statement.executeQuery();
+        // Jika data sudah ada di dalam database, tampilkan dialog popup
+        if (resultSet.next() && resultSet.getInt(1) > 0) {
+            JOptionPane.showMessageDialog(null, 
+                    "Data sudah ada di dalam database!");
             return;
         }
-        try (PreparedStatement checkStmt = connection.prepareStatement(CHECK_QUERY)) {
-            checkStmt.setString(1, b.getNim());
-            try (ResultSet resultSet = checkStmt.executeQuery()) {
-                if (resultSet.next() && resultSet.getInt(1) > 0) {
-                    JOptionPane.showMessageDialog(null, "Data already exists in the database!");
-                    return;
-                }
+        // Jika data belum ada di dalam database, lakukan proses INSERT
+        statement = con.prepareStatement(insert);
+        statement.setString(1, b.getNim());
+        statement.setString(2, b.getNama());
+        statement.setString(3, b.getJenisKelamin());
+        statement.setString(4, b.getKelas());
+        statement.execute();
+        JOptionPane.showMessageDialog(null, "Data berhasil diinput!");
+    } catch (SQLException e) {
+        System.out.println("Gagal Input Data!");
+    } finally {
+        try {
+            if (resultSet != null) {
+                resultSet.close();
             }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error checking data: {0}", e.getMessage());
-            return;
-        }
-
-        try (PreparedStatement insertStmt = connection.prepareStatement(INSERT_QUERY)) {
-            insertStmt.setString(1, b.getNim());
-            insertStmt.setString(2, b.getNama());
-            insertStmt.setString(3, b.getJenisKelamin());
-            insertStmt.setString(4, b.getKelas());
-            insertStmt.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Data inserted successfully!");
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error inserting data: {0}", e.getMessage());
+            if (statement != null) {
+                statement.close();
+            }
+        } catch (SQLException ex) {
+            System.out.println("Gagal Input Data!");
         }
     }
+}
 
     @Override
     public void update(TambahData b) {
-        if (connection == null) {
-            JOptionPane.showMessageDialog(null, "Connection is null. Cannot update data.");
-            return;
+        PreparedStatement statement = null;
+        try{
+            statement = con.prepareStatement(update);
+            statement.setString(1, b.getNama());
+            statement.setString(2, b.getJenisKelamin());
+            statement.setString(3, b.getKelas());
+            statement.setString(4, b.getNim());
+            statement.execute();
+        }catch(SQLException e){
+            System.out.println("Gagal Update Data!");
         }
-        try (PreparedStatement updateStmt = connection.prepareStatement(UPDATE_QUERY)) {
-            updateStmt.setString(1, b.getNama());
-            updateStmt.setString(2, b.getJenisKelamin());
-            updateStmt.setString(3, b.getKelas());
-            updateStmt.setString(4, b.getNim());
-            updateStmt.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Data updated successfully!");
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error updating data: {0}", e.getMessage());
+        finally{
+            try {
+                statement.close();
+            } catch (SQLException ex) {
+                System.out.println("Gagal Update Data!");
+            } 
         }
     }
 
     @Override
     public void delete(String nim) {
-        if (connection == null) {
-            JOptionPane.showMessageDialog(null, "Connection is null. Cannot delete data.");
-            return;
+        PreparedStatement statement = null;
+        try{
+            statement = con.prepareStatement(delete);
+            statement.setString(1, nim);
+            statement.execute();
+        }catch(SQLException e){
+            System.out.println("Gagal Hapus Data!");
         }
-        try (PreparedStatement deleteStmt = connection.prepareStatement(DELETE_QUERY)) {
-            deleteStmt.setString(1, nim);
-            deleteStmt.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Data deleted successfully!");
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error deleting data: {0}", e.getMessage());
-        }
-    }
-
-    @Override
-    public List<TambahData> search(String keyword) {
-        List<TambahData> lstMhs = new ArrayList<>();
-        String sql = "SELECT * FROM tb_mahasiswa WHERE nim LIKE ? OR nama LIKE ?";
-        try (PreparedStatement searchStmt = connection.prepareStatement(sql)) {
-            searchStmt.setString(1, "%" + keyword + "%");
-            searchStmt.setString(2, "%" + keyword + "%");
-            try (ResultSet res = searchStmt.executeQuery()) {
-                while (res.next()) {
-                    TambahData mhs = new TambahData();
-                    mhs.setNim(res.getString("nim"));
-                    mhs.setNama(res.getString("nama"));
-                    mhs.setJenisKelamin(res.getString("jenis_kelamin"));
-                    mhs.setKelas(res.getString("kelas"));
-                    lstMhs.add(mhs);
-                }
-                LOGGER.info("Search completed successfully.");
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error searching data: {0}", e.getMessage());
-        }
-        return lstMhs;
-    }
-
-    public void closeConnection() {
-        if (connection != null) {
+        finally{
             try {
-                connection.close();
-            } catch (SQLException e) {
-                LOGGER.log(Level.SEVERE, "Error closing connection: {0}", e.getMessage());
-            }
+                statement.close();
+            } catch (SQLException ex) {
+                System.out.println("Gagal Hapus Data!");
+            } 
         }
     }
+    
+    public List<TambahData> search(String keyword) {
+    List<TambahData> lstMhs = new ArrayList<>();
+    String sql = "SELECT * FROM tb_mahasiswa WHERE nim LIKE ? OR nama LIKE ?";
+    
+    try (PreparedStatement statement = con.prepareStatement(sql)) {
+        statement.setString(1, "%" + keyword + "%");
+        statement.setString(2, "%" + keyword + "%");
+        ResultSet res = statement.executeQuery();
+        
+        while (res.next()) {
+            TambahData mhs = new TambahData();
+            mhs.setNim(res.getString("nim"));
+            mhs.setNama(res.getString("nama"));
+            mhs.setJenisKelamin(res.getString("jenis_kelamin"));
+            mhs.setKelas(res.getString("kelas"));
+            lstMhs.add(mhs);
+        }
+    } catch (SQLException e) {
+        System.out.println("Error while searching data: " + e.getMessage());
+    }
+    
+    return lstMhs;
+}
+    
+    //koneksi db
+    Connection con;
+    //SQL Query
+    String read = "SELECT * FROM tb_mahasiswa";
+    String checkQuery = "SELECT COUNT(*) FROM tb_mahasiswa WHERE nim = ?";
+    String insert = "INSERT INTO tb_mahasiswa(nim,nama,jenis_kelamin,kelas) VALUES(?,?,?,?)";
+    String update = "UPDATE tb_mahasiswa set nama=?,jenis_kelamin=?,kelas=? WHERE nim=?";
+    String delete = "DELETE FROM tb_mahasiswa WHERE nim=?";
+    
 }
