@@ -23,6 +23,8 @@ public class DAOData implements IDAOData {
     private static final String UPDATE_QUERY = "UPDATE tb_mahasiswa SET nama=?, jenis_kelamin=?, kelas=? WHERE nim=?";
     private static final String DELETE_QUERY = "DELETE FROM tb_mahasiswa WHERE nim=?";
 
+    private Connection connection;
+
     public DAOData() {
         // Koneksi ke database
         try {
@@ -36,7 +38,7 @@ public class DAOData implements IDAOData {
     }
     
     public void clearAll() {
-        String sql = "DELETE FROM yourTableName"; // Ganti dengan nama tabel Anda
+        String sql = "DELETE FROM db_mahasiswa"; // Ganti dengan nama tabel Anda
         try (Statement stmt = connection.createStatement()) {
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
