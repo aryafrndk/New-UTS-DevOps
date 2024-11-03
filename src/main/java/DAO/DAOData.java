@@ -63,71 +63,65 @@ public class DAOData implements IDAOData {
     }
 
     @Override
-    public boolean insert(TambahData b) {
+    public void insert(TambahData b) {
         if (connection == null) {
-            LOGGER.warning("Connection is null. Cannot insert data.");
-            return false;
+            System.out.println("Connection is null. Cannot insert data.");
+            return;
         }
         try (PreparedStatement statement = connection.prepareStatement(CHECK_QUERY)) {
             statement.setString(1, b.getNim());
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next() && resultSet.getInt(1) > 0) {
-                LOGGER.warning("Data already exists in the database.");
-                return false;
+                JOptionPane.showMessageDialog(null, "Data already exists in the database!");
+                return;
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error checking data: {0}", e.getMessage());
-            return false;
+            System.out.println("Error checking data: " + e.getMessage());
+            return;
         }
-
+    
         try (PreparedStatement statement = connection.prepareStatement(INSERT_QUERY)) {
             statement.setString(1, b.getNim());
             statement.setString(2, b.getNama());
             statement.setString(3, b.getJenisKelamin());
             statement.setString(4, b.getKelas());
             statement.execute();
-            LOGGER.info("Data inserted successfully.");
-            return true;
+            JOptionPane.showMessageDialog(null , "Data inserted successfully!");
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error inserting data: {0}", e.getMessage());
-            return false;
+            System.out.println("Error inserting data: " + e.getMessage());
         }
     }
-
+    
     @Override
-    public boolean update(TambahData b) {
+    public void update(TambahData b) {
         if (connection == null) {
-            LOGGER.warning("Connection is null. Cannot update data.");
-            return false;
+            System.out.println("Connection is null. Cannot update data.");
+            return;
         }
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
             statement.setString(1, b.getNama());
             statement.setString(2, b.getJenisKelamin());
             statement.setString(3, b.getKelas());
             statement.setString(4, b.getNim());
-            int rowsAffected = statement.executeUpdate();
-            LOGGER.info("Data updated successfully.");
-            return rowsAffected > 0;
+            statement.execute();
+            JOptionPane.showMessageDialog(null, "Data updated successfully!");
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error updating data: {0}", e.getMessage());
-            return false;
+            System.out.println("Error updating data: " + e.getMessage());
         }
     }
-
+    
     @Override
-    public boolean delete(String nim) {
+    public void delete(String nim) {
         if (connection == null) {
-            LOGGER.warning("Connection is null. Cannot delete data.");
-            return false;
+            System.out.println("Connection is null. Cannot delete data.");
+            return;
         }
         try (PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
             statement.setString(1, nim);
-            int rowsAffected = statement.executeUpdate();
-            LOGGER.info("Data deleted successfully.");
-            return rowsAffected > 0;
+            statement.execute();
+            JOptionPane.showMessageDialog(null, "Data deleted successfully!");
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error deleting data: {0}", e.getMessage());
-            return false;
+            System.out.println("Error deleting data: " + e.getMessage());
         }
     }
 
