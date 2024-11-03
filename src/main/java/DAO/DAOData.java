@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import model.TambahData;
 import koneksi.DBConnection;
+import java.sql.DriverManager;
 
 public class DAOData implements IDAOData {
 
