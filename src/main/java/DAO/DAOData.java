@@ -14,7 +14,6 @@ public class DAOData implements IDAOData {
     private static final Logger LOGGER = Logger.getLogger(DAOData.class.getName());
     private final Connection connection;
 
-    // SQL Queries
     private static final String READ_QUERY = "SELECT * FROM tb_mahasiswa";
     private static final String CHECK_QUERY = "SELECT COUNT(*) FROM tb_mahasiswa WHERE nim = ?";
     private static final String INSERT_QUERY = "INSERT INTO tb_mahasiswa(nim, nama, jenis_kelamin, kelas) VALUES(?, ?, ?, ?)";
