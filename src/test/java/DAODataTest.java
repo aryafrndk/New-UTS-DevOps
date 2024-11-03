@@ -19,7 +19,7 @@ public class DAODataTest {
     private Connection connection;
 
     // Update with your database connection details
-    private final String url = "jdbc:mysql://localhost:3306/";
+    private final String url = "jdbc:mysql://127.0.0.1:3306/";
     private final String user = "root";
     private final String password = ""; // Replace with your actual password
     private final String dbName = "db_mahasiswa"; // Nama database yang akan digunakan
