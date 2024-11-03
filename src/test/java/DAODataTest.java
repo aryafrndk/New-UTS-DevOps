@@ -38,6 +38,9 @@ public class DAODataTest {
         
         // Inisialisasi DAO
         daoData = new DAOData(connection);
+        
+        // Membersihkan data sebelum pengujian
+        daoData.clearAll();
     }
 
     @Test
@@ -70,7 +73,7 @@ public class DAODataTest {
 
         // Verifikasi bahwa data telah diperbarui
         List<TambahData> allData = daoData.getAll();
-        assertTrue(allData.stream().anyMatch(data -> data.getNim().equals("12345") && data.getNama().equals("John Smith")));
+        assertTrue(allData.stream().anyMatch(data -> data.getNim(). equals("12345") && data.getNama().equals("John Smith")));
     }
 
     @Test
