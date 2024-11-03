@@ -124,7 +124,7 @@ public class DAODataTest {
         mhs.setNim("12345");
         mhs.setNama("John Doe");
         mhs.setJenisKelamin("Laki-Laki");
-        mhs.setKelas("1A");
+        m hs.setKelas("1A");
         daoData.insert(mhs);
 
         // Delete data
