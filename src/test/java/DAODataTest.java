@@ -77,15 +77,15 @@ public class DAODataTest {
     public void testInsert() {
         System.out.println("Running testInsert...");
         assertNotNull(daoData, "DAOData is null, setup failed.");
-
+    
         TambahData mhs = new TambahData();
         mhs.setNim("12345");
         mhs.setNama("John Doe");
         mhs.setJenisKelamin("Laki-Laki");
         mhs.setKelas("1A");
-
+    
         daoData.insert(mhs);
-
+    
         List<TambahData> allData = daoData.getAll();
         assertTrue(allData.stream().anyMatch(data -> data.getNim().equals("12345")), "Data not found after insert");
     }
@@ -93,17 +93,14 @@ public class DAODataTest {
     @Test
     public void testUpdate() {
         System.out.println("Running testUpdate...");
+        // Pastikan untuk memanggil insert sebelum update
+        testInsert(); // Memanggil testInsert untuk memastikan data ada
+    
         TambahData mhs = new TambahData();
         mhs.setNim("12345");
-        mhs.setNama("John Doe");
-        mhs.setJenisKelamin("Laki-Laki");
-        mhs.setKelas("1A");
-        daoData.insert(mhs);
-
-        // Update data
-        mhs.setNama("John Smith");
+        mhs.setNama("John Smith"); // Update nama
         daoData.update(mhs);
-
+    
         // Verify data update
         List<TambahData> allData = daoData.getAll();
         assertTrue(allData.stream().anyMatch(data -> data.getNim().equals("12345") && data.getNama().equals("John Smith")), "Data not updated correctly");
