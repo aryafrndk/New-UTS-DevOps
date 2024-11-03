@@ -27,11 +27,10 @@ public class DAOData implements IDAOData {
     private Connection connection;
 
     public DAOData() {
-        // Koneksi ke database
         try {
-            String url = "jdbc:mysql://127.0.0.1:3306/db_mahasiswa"; 
-            String user = "root"; // Ganti dengan username Anda
-            String password = ""; // Ganti dengan password Anda
+            String url = "jdbc:mysql://localhost:3306/db_mahasiswa";
+            String user = "root";
+            String password = ""; // Password kosong
             connection = DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -39,7 +38,11 @@ public class DAOData implements IDAOData {
     }
     
     public void clearAll() {
-        String sql = "DELETE FROM db_mahasiswa"; // Ganti dengan nama tabel Anda
+        if (connection == null) {
+            System.out.println("Connection is null. Cannot clear data.");
+            return; // Atau lempar exception sesuai kebutuhan
+        }
+        String sql = "DELETE FROM tb_mahasiswa"; // Ganti dengan nama tabel Anda
         try (Statement stmt = connection.createStatement()) {
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
