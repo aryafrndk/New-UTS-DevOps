@@ -26,11 +26,11 @@ public class DAODataTest {
     @BeforeEach
     public void setUp() {
         try {
-            // Establishing connection
+            // Establish connection
             connection = DriverManager.getConnection(url, user, password);
             assertNotNull(connection, "Connection should not be null");
             System.out.println("Database connection established.");
-    
+        
             // Create the table if it doesn’t exist
             String createTableSQL = "CREATE TABLE IF NOT EXISTS tb_mahasiswa ("
                     + "nim VARCHAR(20) PRIMARY KEY, "
@@ -41,7 +41,7 @@ public class DAODataTest {
                 statement.execute(createTableSQL);
             }
     
-            // Initialize DAO
+            // Initialize DAO with connection
             daoData = new DAOData(connection);
             assertNotNull(daoData, "DAOData should not be null");
             System.out.println("DAOData initialized.");
