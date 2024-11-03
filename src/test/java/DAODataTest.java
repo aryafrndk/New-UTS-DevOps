@@ -124,12 +124,12 @@ public class DAODataTest {
         mhs.setNim("12345");
         mhs.setNama("John Doe");
         mhs.setJenisKelamin("Laki-Laki");
-        m hs.setKelas("1A");
+        mhs.setKelas("1A");
         daoData.insert(mhs);
-
+    
         // Delete data
         daoData.delete("12345");
-
+    
         // Verify deletion
         List<TambahData> allData = daoData.getAll();
         assertFalse(allData.stream().anyMatch(data -> data.getNim().equals("12345")), "Data not deleted");
