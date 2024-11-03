@@ -25,7 +25,7 @@ public class controllerData {
         try {
             String url = "jdbc:mysql://localhost:3306/db_mahasiswa";
             String user = "root";
-            String password = "rootpassword"; // Ganti dengan password yang sesuai
+            String password = ""; // Ganti dengan password yang sesuai
             Connection connection = DriverManager.getConnection(url, user, password);
             iData = new DAOData(connection); // Menggunakan konstruktor yang benar
         } catch (SQLException e) {
@@ -48,8 +48,16 @@ public class controllerData {
         b.setNama(fc.gettxtNama().getText());
         b.setJenisKelamin(fc.getjenisKelamin().getSelectedItem().toString());
         b.setKelas(fc.gettxtKelas().getText());
+
+        // Validasi input
+        if (b.getNim().isEmpty() || b.getNama().isEmpty() || b.getKelas().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Semua field harus diisi!");
+            return;
+        }
+
         iData.insert(b);
         JOptionPane.showMessageDialog(null, "Data berhasil ditambahkan!");
+        isiTable(); // Refresh tabel setelah penambahan
     }
     
     // Method untuk mereset form input
@@ -78,14 +86,29 @@ public class controllerData {
         b.setJenisKelamin(fc.getjenisKelamin().getSelectedItem().toString());
         b.setKelas(fc.gettxtKelas().getText());
         b.setNim(fc.gettxtNim().getText());
+
+        // Validasi input
+        if (b.getNim().isEmpty() || b.getNama ().isEmpty() || b.getKelas().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Semua field harus diisi!");
+            return;
+        }
+
         iData.update(b);
         JOptionPane.showMessageDialog(null, "Berhasil Melakukan Update!");
+        isiTable(); // Refresh tabel setelah perubahan
     }
     
     // Method untuk menghapus data mahasiswa
     public void delete() {
-        iData.delete(fc.gettxtNim().getText());
+        String nim = fc.gettxtNim().getText();
+        if (nim.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Pilih data yang ingin dihapus!");
+            return;
+        }
+
+        iData.delete(nim);
         JOptionPane.showMessageDialog(null, "Berhasil Menghapus Data!");
+        isiTable(); // Refresh tabel setelah penghapusan
     }
     
     // Method untuk mencari data mahasiswa berdasarkan NIM atau nama
