@@ -90,7 +90,7 @@ public class controllerData {
     
     // Method untuk mencari data mahasiswa berdasarkan NIM atau nama
     public void cari(String keyword) {
-        List<T ambahData> searchResults = iData.search(keyword); // Memanggil method search
+        List<TambahData> searchResults = iData.search(keyword); // Memanggil method search
         TabelModelData tabelMhs = new TabelModelData(searchResults);
         fc.getTabelData().setModel(tabelMhs); 
     }
