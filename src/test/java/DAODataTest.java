@@ -24,8 +24,7 @@ public class DAODataTest {
 
     @BeforeEach
     public void setUp() {
-        daoData = new DAOData();
-        daoData.con = connection; // Use the in-memory connection
+        daoData = new DAOData(connection); // Pass the connection to the DAOData constructor
     }
 
     @AfterAll
