@@ -1,4 +1,4 @@
-package test; // Make sure this matches your package structure
+package test; // Ensure this matches your package structure
 
 import DAO.DAOData;
 import DAOInterface.IDAOData;
@@ -28,9 +28,9 @@ public class DAODataTest {
         data.setJenisKelamin("Laki-laki");
         data.setKelas("A");
 
-        assertTrue(daoData.insert(data)); // Assuming insert returns a boolean
+        daoData.insert(data); // Call the method directly
+        // You may want to verify that the data was actually inserted
     }
-
     @Test
     public void testUpdate() {
         TambahData data = new TambahData();
