@@ -23,7 +23,7 @@ public class controllerData {
             String user = "root";
             String password = ""; // Ganti dengan password yang sesuai
             Connection connection = DriverManager.getConnection(url, user, password);
-            iData = new DAOData(connection);
+            iData = new DAOData(connection); // Menggunakan konstruktor yang benar
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Koneksi ke database gagal!");
