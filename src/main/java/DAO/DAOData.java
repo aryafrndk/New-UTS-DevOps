@@ -12,7 +12,11 @@ import javax.swing.JOptionPane;
 
 public class DAOData implements IDAOData {
     private static final Logger LOGGER = Logger.getLogger(DAOData.class.getName());
-    private final Connection connection;
+    private Connection connection;
+
+    private static final String URL = "jdbc:mysql://localhost:3306/db_mahasiswa"; // Ganti dengan URL Anda
+    private static final String USER = "root"; // Ganti dengan username Anda
+    private static final String PASSWORD = ""; // Ganti dengan password Anda
 
     private static final String READ_QUERY = "SELECT * FROM tb_mahasiswa";
     private static final String CHECK_QUERY = "SELECT COUNT(*) FROM tb_mahasiswa WHERE nim = ?";
@@ -20,8 +24,13 @@ public class DAOData implements IDAOData {
     private static final String UPDATE_QUERY = "UPDATE tb_mahasiswa SET nama = ?, jenis_kelamin = ?, kelas = ? WHERE nim = ?";
     private static final String DELETE_QUERY = "DELETE FROM tb_mahasiswa WHERE nim = ?";
 
-    public DAOData(Connection connection) {
-        this.connection = connection;
+    public DAOData() {
+        try {
+            this.connection = DriverManager.getConnection(URL, USER, PASSWORD);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to connect to the database: {0}", e.getMessage());
+            throw new RuntimeException("Database connection failed", e);
+        }
     }
 
     public void clearAll() {
@@ -76,7 +85,7 @@ public class DAOData implements IDAOData {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error checking data: {0}", e.getMessage());
+            LOGGER.log(Level .SEVERE, "Error checking data: {0}", e.getMessage());
             return;
         }
 
@@ -147,5 +156,15 @@ public class DAOData implements IDAOData {
             LOGGER.log(Level.SEVERE, "Error searching data: {0}", e.getMessage());
         }
         return lstMhs;
+    }
+
+    public void closeConnection() {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                LOGGER.log(Level.SEVERE, "Error closing connection: {0}", e.getMessage());
+            }
+        }
     }
 }
