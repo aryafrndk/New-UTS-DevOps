@@ -2,6 +2,7 @@ package test;
 
 import DAO.DAOData;
 import model.TambahData;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,7 @@ public class DAODataTest {
         
         // Membuat tabel jika belum ada
         String createTableSQL = "CREATE TABLE IF NOT EXISTS tb_mahasiswa ("
-                + "nim VARCHAR(20), "
+                + "nim VARCHAR(20) PRIMARY KEY, "
                 + "nama VARCHAR(20), "
                 + "jenis_kelamin VARCHAR(35), "
                 + "kelas VARCHAR(30))"; // Tambahkan tanda kurung tutup
@@ -41,6 +42,15 @@ public class DAODataTest {
         
         // Membersihkan data sebelum pengujian
         daoData.clearAll();
+    }
+
+    @AfterEach
+    public void tearDown() throws SQLException {
+        // Membersihkan data setelah pengujian
+        daoData.clearAll();
+        if (connection != null && !connection.isClosed()) {
+            connection.close();
+        }
     }
 
     @Test
@@ -73,7 +83,7 @@ public class DAODataTest {
 
         // Verifikasi bahwa data telah diperbarui
         List<TambahData> allData = daoData.getAll();
-        assertTrue(allData.stream().anyMatch(data -> data.getNim(). equals("12345") && data.getNama().equals("John Smith")));
+        assertTrue(allData.stream().anyMatch(data -> data.getNim().equals("12345") && data.getNama().equals("John Smith")));
     }
 
     @Test
