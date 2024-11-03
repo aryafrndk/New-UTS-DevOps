@@ -1,3 +1,5 @@
+package test; // Make sure this matches your package structure
+
 import DAO.DAOData;
 import DAOInterface.IDAOData;
 import model.TambahData;
@@ -5,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
-
+import java.util.List; // Import List
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DAODataTest {
