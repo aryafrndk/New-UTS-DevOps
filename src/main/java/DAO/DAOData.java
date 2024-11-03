@@ -24,9 +24,23 @@ public class DAOData implements IDAOData {
     private static final String DELETE_QUERY = "DELETE FROM tb_mahasiswa WHERE nim=?";
 
     public DAOData() {
-        con = DBConnection.connectDB();
-        if (con == null) {
-            throw new IllegalStateException("Failed to connect to the database.");
+        // Koneksi ke database
+        try {
+            String url = "jdbc:mysql://127.0.0.1:3306/db_mahasiswa"; 
+            String user = "root"; // Ganti dengan username Anda
+            String password = ""; // Ganti dengan password Anda
+            connection = DriverManager.getConnection(url, user, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void clearAll() {
+        String sql = "DELETE FROM yourTableName"; // Ganti dengan nama tabel Anda
+        try (Statement stmt = connection.createStatement()) {
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
