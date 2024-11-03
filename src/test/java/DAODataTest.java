@@ -25,35 +25,11 @@ public class DAODataTest {
     @BeforeEach
     public void setUp() {
         try {
-            // Establish connection
-            connection = DriverManager.getConnection(url, user, password);
-            assertNotNull(connection, "Connection should not be null");
-            System.out.println("Database connection established.");
-    
-            // Create the table if it doesn’t exist
-            String createTableSQL = "CREATE TABLE IF NOT EXISTS tb_mahasiswa (" +
-                    "nim VARCHAR(20) PRIMARY KEY, " +
-                    "nama VARCHAR(20), " +
-                    "jenis_kelamin VARCHAR(35), " +
-                    "kelas VARCHAR(30))";
-    
-            try (Statement statement = connection.createStatement()) {
-                statement.execute(createTableSQL);
-                System.out.println("Table tb_mahasiswa created or already exists.");
-            }
-    
-            // Initialize DAO with connection
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/db_lembaga_pelatihan", "root", "");
             daoData = new DAOData(connection);
-            assertNotNull(daoData, "DAOData should not be null after initialization");
-            System.out.println("DAOData initialized successfully.");
-    
-            // Clear data before each test
-            daoData.clearAll();
-            System.out.println("Data cleared before tests.");
-    
         } catch (SQLException e) {
-            e.printStackTrace();
-            fail("Failed to set up database connection or DAOData: " + e.getMessage());
+            e.printStackTrace(); // Jika terjadi kesalahan, cetak stack trace untuk debug
+            fail("Failed to establish database connection");
         }
     }
 
