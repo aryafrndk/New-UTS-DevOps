@@ -125,7 +125,7 @@ public class DAOData implements IDAOData {
                 mhs.setNama(res.getString("nama"));
                 mhs.setJenisKelamin(res.getString("jenis_kelamin"));
                 mhs.setKelas(res.getString("kelas"));
-                lstMhs.add(m hs);
+                lstMhs.add(mhs);
             }
         } catch (SQLException e) {
             System.out.println("Error while searching data: " + e.getMessage());
