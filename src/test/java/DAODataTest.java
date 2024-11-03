@@ -21,17 +21,15 @@ public class DAODataTest {
     // Update with your database connection details
     private final String url = "jdbc:mysql://localhost:3306/db_mahasiswa";
     private final String user = "root";
-    private final String password = "rootpassword"; // Replace with your actual password
+    private final String password = ""; // Replace with your actual password
 
     @BeforeEach
     public void setUp() {
         try {
-            // Establish connection
             connection = DriverManager.getConnection(url, user, password);
             assertNotNull(connection, "Connection should not be null");
             System.out.println("Database connection established.");
-
-            // Create the table if it doesn’t exist
+    
             String createTableSQL = "CREATE TABLE IF NOT EXISTS tb_mahasiswa (" +
                     "nim VARCHAR(20) PRIMARY KEY, " +
                     "nama VARCHAR(20), " +
@@ -40,13 +38,11 @@ public class DAODataTest {
             try (Statement statement = connection.createStatement()) {
                 statement.execute(createTableSQL);
             }
-
-            // Initialize DAO with connection
+    
             daoData = new DAOData(connection);
-            assertNotNull(daoData, "DAOData should not be null");
+            assertNotNull(daoData, "DAOData should not be null after initialization");
             System.out.println("DAOData initialized.");
-
-            // Clear data before each test
+    
             daoData.clearAll();
         } catch (SQLException e) {
             fail("Failed to set up database connection or DAOData: " + e.getMessage());
