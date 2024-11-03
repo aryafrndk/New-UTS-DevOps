@@ -1,30 +1,43 @@
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
+package test;
+
 import DAO.DAOData;
 import model.TambahData;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DAODataTest {
     private DAOData daoData;
+    private Connection connection;
 
-    @Before
+    // Ganti dengan URL, user, dan password yang sesuai
+    private String url = "jdbc:mysql://localhost:3306/db_mahasiswa";
+    private String user = "root";
+    private String password = "rootpassword"; // Ganti dengan password yang sesuai
+
+    @BeforeEach
     public void setUp() throws Exception {
         // Koneksi ke database
-        Connection connection = DriverManager.getConnection(url, user, password);
+        connection = DriverManager.getConnection(url, user, password);
         
         // Membuat tabel jika belum ada
         String createTableSQL = "CREATE TABLE IF NOT EXISTS tb_mahasiswa ("
                 + "nim VARCHAR(20), "
                 + "nama VARCHAR(20), "
                 + "jenis_kelamin VARCHAR(35), "
-                + "kelas VARCHAR(30)";
+                + "kelas VARCHAR(30))"; // Tambahkan tanda kurung tutup
         Statement statement = connection.createStatement();
         statement.execute(createTableSQL);
         
         // Inisialisasi DAO
-        dao = new DAOData(connection);
+        daoData = new DAOData(connection);
     }
 
     @Test
@@ -89,7 +102,7 @@ public class DAODataTest {
         daoData.insert(mhs);
 
         // Mencari data berdasarkan NIM
-        List<TambahData> searchResults = daoData.search(" 12345");
+        List<TambahData> searchResults = daoData.search("12345");
         assertFalse(searchResults.isEmpty());
         assertEquals("John Doe", searchResults.get(0).getNama());
 
