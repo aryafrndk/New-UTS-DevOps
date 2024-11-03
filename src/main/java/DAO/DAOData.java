@@ -10,7 +10,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import model.TambahData;
-import koneksi.DBConnection; // Pastikan ini sesuai dengan implementasi Anda
 import java.sql.DriverManager;
 
 public class DAOData implements IDAOData {
@@ -100,4 +99,35 @@ public class DAOData implements IDAOData {
     }
 
     @Override
-    public void update(TambahData b)
+    public void update(TambahData b) {
+        if (connection == null) {
+            System.out.println("Connection is null. Cannot update data.");
+            return; // Atau lempar exception sesuai kebutuhan
+        }
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
+            statement.setString(1, b.getNama());
+            statement.setString(2, b.getJenisKelamin());
+            statement.setString(3, b.getKelas());
+            statement.setString(4, b.getNim());
+            statement.execute();
+            JOptionPane.showMessageDialog(null, "Data berhasil diupdate!");
+        } catch (SQLException e) {
+            System.out.println("Error updating data: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void delete(TambahData b) {
+        if (connection == null) {
+            System.out.println("Connection is null. Cannot delete data.");
+            return; // Atau lempar exception sesuai kebutuhan
+        }
+        try (PreparedStatement statement = connection.prepareStatement(DELETE_QUERY)) {
+            statement.setString(1, b.getNim());
+            statement.execute();
+            JOptionPane.showMessageDialog(null, "Data berhasil dihapus!");
+        } catch (SQLException e) {
+            System.out.println("Error deleting data: " + e.getMessage());
+        }
+    }
+}
