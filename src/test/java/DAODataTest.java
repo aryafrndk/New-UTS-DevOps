@@ -11,9 +11,9 @@ public class DAODataTest {
 
     @Before
     public void setUp() {
-    daoData = new DAOData();
-    // Optionally, clear the database or set it to a known state here
-    // daoData.clearAll(); // Implement a method to clear test data if needed
+        daoData = new DAOData();
+        // Clear the database or set it to a known state here
+        daoData.clearAll(); // Implement this method in DAOData to clear test data
     }
 
     @Test
@@ -46,7 +46,7 @@ public class DAODataTest {
 
         // Verifikasi bahwa data telah diperbarui
         List<TambahData> allData = daoData.getAll();
-        assertTrue(allData.stream().anyMatch(data -> data.getNama().equals("John Smith")));
+        assertTrue(allData.stream().anyMatch(data -> data.getNim().equals("12345") && data.getNama().equals("John Smith")));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class DAODataTest {
         daoData.insert(mhs);
 
         // Mencari data berdasarkan NIM
-        List<TambahData> searchResults = daoData.search("12345");
+        List<TambahData> searchResults = daoData.search(" 12345");
         assertFalse(searchResults.isEmpty());
         assertEquals("John Doe", searchResults.get(0).getNama());
 
