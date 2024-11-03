@@ -11,8 +11,7 @@ jobs:
         image: mysql:5.7
         env:
           MYSQL_DATABASE: db_mahasiswa
-          MYSQL_ALLOW_EMPTY_PASSWORD: true  # Allow empty password
-          MYSQL_ROOT_PASSWORD: rootpassword  # It's a good practice to set a root password
+          MYSQL_ROOT_PASSWORD: rootpassword  # Good practice to set a root password
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -30,18 +29,13 @@ jobs:
       - name: Wait for MySQL to be ready
         run: |
           for i in {1..30}; do
-            if mysqladmin ping -h "127.0.0.1" --silent; then
+            if mysqladmin ping -h "127.0.0.1" -u root -prootpassword --silent; then
               echo "MySQL is up!"
               break
             fi
             echo "Waiting for MySQL..."
             sleep 2
           done
-
-      - name: Create Database
-        run: |
-          mysql -h 127.0.0.1 -u root -prootpassword -e 'CREATE DATABASE IF NOT EXISTS db_mahasiswa;'
-        # Note: Use the root password here if you set it above
 
       - name: Build with Maven
         run: mvn clean install
