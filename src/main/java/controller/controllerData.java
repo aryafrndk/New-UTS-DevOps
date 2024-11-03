@@ -2,12 +2,13 @@ package controller;
 
 import DAO.DAOData;
 import DAOInterface.IDAOData;
-import java.sql.Connection; // Import Connection
+import java.sql.Connection; 
+import java.util.List;
 import javax.swing.JOptionPane;
 import model.TabelModelData;
 import model.TambahData;
 import view.formcrud;
-import koneksi.DBConnection; // Ensure this import is correct for your DBConnection class
+import koneksi.DBConnection; 
 
 /**
  * Controller untuk mengelola data mahasiswa
@@ -16,71 +17,102 @@ public class controllerData {
     private formcrud fc;
     private IDAOData iData;
     private List<TambahData> lstMhs;
+    private Connection connection; // Store the connection
 
     public controllerData(formcrud fc) {
         this.fc = fc;
-        Connection connection = DBConnection.connectDB(); // Get the connection
+        connection = DBConnection.connectDB(); // Get the connection
         iData = new DAOData(connection); // Pass the connection to DAOData
+        isiTable(); // Load initial data into the table
     }
     
-    // Method untuk mengisi tabel dengan data mahasiswa
+    // Method to populate the table with student data
     public void isiTable() {
         lstMhs = iData.getAll();
         TabelModelData tabelMhs = new TabelModelData(lstMhs);
         fc.getTabelData().setModel(tabelMhs); 
     }
     
-    // Method untuk menambahkan data mahasiswa
+    // Method to add student data
     public void insert() {
-        TambahData b = new TambahData();
-        b.setNim(fc.gettxtNim().getText());
-        b.setNama(fc.gettxtNama().getText());
-        b.setJenisKelamin(fc.getjenisKelamin().getSelectedItem().toString());
-        b.setKelas(fc.gettxtKelas().getText());
-        iData.insert(b);
-        JOptionPane.showMessageDialog(null, "Data berhasil ditambahkan!");
+        try {
+            TambahData b = new TambahData();
+            b.setNim(fc.gettxtNim().getText());
+            b.setNama(fc.gettxtNama().getText());
+            b.setJenisKelamin(fc.getjenisKelamin().getSelectedItem().toString());
+            b.setKelas(fc.gettxtKelas().getText());
+            iData.insert(b);
+            JOptionPane.showMessageDialog(fc, "Data berhasil ditambahkan!");
+            reset(); // Optionally reset the form after adding
+            isiTable(); // Refresh the table
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(fc, "Error: " + e.getMessage());
+        }
     }
     
-    // Method untuk mereset form input
+    // Method to reset the input form
     public void reset() {
-        if (!fc.gettxtNim().isEnabled())
-            fc.gettxtNim().setEnabled(true);
+        fc.gettxtNim().setEnabled(true);
         fc.gettxtNim().setText("");
         fc.gettxtNama().setText("");
         fc.getjenisKelamin().setSelectedItem("Pilih Jenis Kelamin");
         fc.gettxtKelas().setText("");
     }
     
-    // Method untuk mengisi field dengan data yang dipilih dari tabel
+    // Method to fill fields with selected data from the table
     public void isiField(int row) {
-        fc.gettxtNim().setEnabled(false);
-        fc.gettxtNim().setText(lstMhs.get(row).getNim());
-        fc.gettxtNama().setText(lstMhs.get(row).getNama());
-        fc.getjenisKelamin().setSelectedItem(lstMhs.get(row).getJenisKelamin());
-        fc.gettxtKelas().setText(lstMhs.get(row).getKelas());
+        if (lstMhs != null && row >= 0 && row < lstMhs.size()) {
+            fc.gettxtNim().setEnabled(false);
+            fc.gettxtNim().setText(lstMhs.get(row).getNim());
+            fc.gettxtNama().setText(lstMhs.get(row).getNama());
+            fc.getjenisKelamin().setSelectedItem(lstMhs.get(row).getJenisKelamin());
+            fc.gettxtKelas().setText(lstMhs.get(row).getKelas());
+        }
     }
     
-    // Method untuk memperbarui data mahasiswa
+    // Method to update student data
     public void update() {
-        TambahData b = new TambahData();
-        b.setNama(fc.gettxtNama().getText());
-        b.setJenisKelamin(fc.getjenisKelamin().getSelectedItem().toString());
-        b.setKelas(fc.gettxtKelas().getText());
-        b.setNim(fc.gettxtNim().getText());
-        iData.update(b);
-        JOptionPane.showMessageDialog(null, "Berhasil Melakukan Update!");
+        try {
+            TambahData b = new TambahData();
+            b.setNama(fc.gettxtNama().getText());
+            b.setJenisKelamin(fc.getjenisKelamin().getSelectedItem().toString());
+            b.setKelas(fc.gettxtKelas().getText());
+            b.setNim(fc.gettxtNim().getText());
+            iData.update(b);
+            JOptionPane.showMessageDialog(fc, "Berhasil Melakukan Update!");
+            reset(); // Optionally reset the form after updating
+            isiTable(); // Refresh the table
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(fc, "Error: " + e.getMessage());
+        }
     }
     
-    // Method untuk menghapus data mahasiswa
+    // Method to delete student data
     public void delete() {
-        iData.delete(fc.gettxtNim().getText());
-        JOptionPane.showMessageDialog(null, "Berhasil Menghapus Data!");
+        try {
+            String nim = fc.gettxtNim().getText();
+            iData.delete(nim);
+            JOptionPane.showMessageDialog (fc, "Berhasil Menghapus Data!");
+            reset(); // Optionally reset the form after deleting
+            isiTable(); // Refresh the table
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(fc, "Error: " + e.getMessage());
+        }
     }
     
-    // Method untuk mencari data mahasiswa berdasarkan NIM atau nama
+    // Method to search for student data by NIM or name
     public void cari(String keyword) {
-        List<TambahData> searchResults = iData.search(keyword);
-        TabelModelData tabelMhs = new TabelModelData(searchResults);
-        fc.getTabelData().setModel(tabelMhs); 
+        try {
+            List<TambahData> searchResults = iData.search(keyword);
+            TabelModelData tabelMhs = new TabelModelData(searchResults);
+            fc.getTabelData().setModel(tabelMhs); 
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(fc, "Error: " + e.getMessage());
+        }
+    }
+    
+    // Method to close the database connection
+    public void close() {
+        DBConnection.closeConnection(connection);
     }
 }
