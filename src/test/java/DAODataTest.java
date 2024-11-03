@@ -23,7 +23,7 @@ public class DAODataTest {
     private final String user = "root";
     private final String password = ""; // Replace with your actual password
 
-    @BeforeEach
+   @BeforeEach
     public void setUp() {
         try {
             // Establish connection
