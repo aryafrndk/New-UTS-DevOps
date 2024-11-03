@@ -10,7 +10,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import model.TambahData;
-import java.sql.DriverManager;
 
 public class DAOData implements IDAOData {
 
@@ -23,15 +22,9 @@ public class DAOData implements IDAOData {
     private static final String UPDATE_QUERY = "UPDATE tb_mahasiswa SET nama=?, jenis_kelamin=?, kelas=? WHERE nim=?";
     private static final String DELETE_QUERY = "DELETE FROM tb_mahasiswa WHERE nim=?";
 
-    public DAOData() {
-        try {
-            String url = "jdbc:mysql://localhost:3306/db_mahasiswa";
-            String user = "root";
-            String password = "rootpassword"; // Ganti dengan password yang sesuai
-            connection = DriverManager.getConnection(url, user, password);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    // Constructor with Connection parameter
+    public DAOData(Connection connection) {
+        this.connection = connection;
     }
 
     public void clearAll() {
