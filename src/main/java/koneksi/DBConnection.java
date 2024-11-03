@@ -5,16 +5,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnection {
-    static final String DB_URL = "jdbc:mysql://localhost:3306/db_mahasiswa";
-    static final String USER = "root";
-    static final String PASS = "";
+    static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/db_mahasiswa"; // Pastikan URL ini benar
+    static final String USER = "root"; // Username sesuai
+    static final String PASS = ""; // Password kosong
 
     public static Connection connectDB() {
         Connection conn = null;
         try {
-            // Optional: Load the MySQL JDBC driver (not always necessary with newer JDBC versions)
-            // Class.forName("com.mysql.cj.jdbc.Driver"); // Uncomment if needed
-
             conn = DriverManager.getConnection(DB_URL, USER, PASS);
             return conn;
         } catch (SQLException ex) {
