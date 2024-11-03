@@ -1,60 +1,23 @@
-name: Java CI with Maven
+name: Java CI
 
-on: [push]
+on:
+  push:
+    branches: [ main ]
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
-
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_DATABASE: db_mahasiswa
-          MYSQL_ALLOW_EMPTY_PASSWORD: "true"  # Izinkan password kosong
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up JDK
+      - name: Set up JDK 11
         uses: actions/setup-java@v2
         with:
           java-version: '11'
-          distribution: 'temurin'
+          distribution: 'adopt'
 
-      - name: Wait for MySQL to be ready
+      - name: Build and test
         run: |
-          for i in {1..30}; do
-            if mysqladmin ping -h "127.0.0.1" -u root --silent; then
-              echo "MySQL is up!"
-              break
-            fi
-            echo "Waiting for MySQL..."
-            sleep 2
-          done
-
-      - name: Create database and table
-        run: |
-            mysql -h 127.0.0.1 -u root -e "CREATE DATABASE IF NOT EXISTS db_mahasiswa;"
-            mysql -h 127.0.0.1 -u root -D db_mahasiswa -e "CREATE TABLE IF NOT EXISTS tb_mahasiswa (nim VARCHAR(20) PRIMARY KEY, nama VARCHAR(20), jenis_kelamin VARCHAR(35), kelas VARCHAR(30));"
-
-      - name: Verify database and table creation
-        run: |
-          echo "Databases:"
-          mysql -h 127.0.0.1 -u root -e "SHOW DATABASES;"
-          echo "Tables in db_mahasiswa:"
-          mysql -h 127.0.0.1 -u root -D db_mahasiswa -e "SHOW TABLES;"
-
-      - name: Grant access for user 'root'@'%'
-        run: |
-          mysql -h 127.0.0.1 -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;"
-
-      - name: Build with Maven
-        run: mvn clean install
-
-      - name: Run tests
-        run: mvn test
+          mvn clean package
+          mvn test
