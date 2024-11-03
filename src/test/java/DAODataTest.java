@@ -10,10 +10,21 @@ public class DAODataTest {
     private DAOData daoData;
 
     @Before
-    public void setUp() {
-        daoData = new DAOData();
-        // Clear the database or set it to a known state here
-        daoData.clearAll(); // Implement this method in DAOData to clear test data
+    public void setUp() throws Exception {
+        // Koneksi ke database
+        Connection connection = DriverManager.getConnection(url, user, password);
+        
+        // Membuat tabel jika belum ada
+        String createTableSQL = "CREATE TABLE IF NOT EXISTS tb_mahasiswa ("
+                + "nim VARCHAR(20), "
+                + "nama VARCHAR(20), "
+                + "jenis_kelamin VARCHAR(35), "
+                + "kelas VARCHAR(30)";
+        Statement statement = connection.createStatement();
+        statement.execute(createTableSQL);
+        
+        // Inisialisasi DAO
+        dao = new DAOData(connection);
     }
 
     @Test
