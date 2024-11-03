@@ -37,6 +37,11 @@ jobs:
             sleep 2
           done
 
+      - name: Create database and table
+        run: |
+          mysql -h 127.0.0.1 -u root -e "CREATE DATABASE IF NOT EXISTS db_mahasiswa;"
+          mysql -h 127.0.0.1 -u root -D db_mahasiswa -e "CREATE TABLE IF NOT EXISTS tb_mahasiswa (nim VARCHAR(20) PRIMARY KEY, nama VARCHAR(20), jenis_kelamin VARCHAR(35), kelas VARCHAR(30));"
+
       - name: Grant access for user 'root'@'%'
         run: |
           mysql -h 127.0.0.1 -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;"
